@@ -1,0 +1,37 @@
+# LangChain
+langchain
+langchain-core
+
+# LangGraph
+langgraph
+langgraph-checkpoint
+langgraph-prebuilt
+langgraph-sdk
+
+# OpenAI
+langchain-openai
+openai
+
+# Anthropic
+langchain-anthropic
+
+# Google
+langchain-google-genai
+google-generativeai
+
+# Hugging Face
+langchain-huggingface
+transformers
+huggingface-hub
+
+# Utilities
+python-dotenv
+langsmith
+
+# ML
+numpy
+scikit-learn
+
+# Jupyter
+ipykernel
+ipywidgets

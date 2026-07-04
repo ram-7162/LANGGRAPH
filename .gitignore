@@ -1,0 +1,16 @@
+# Virtual environment
+myenv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+.env
+
+# VS Code (optional)
+.vscode/
