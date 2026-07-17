@@ -1,5 +1,5 @@
 # Virtual environment
-myenv/
+newenv/
 .venv/
 
 # Python cache
