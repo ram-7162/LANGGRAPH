@@ -10,10 +10,9 @@ load_dotenv()
 
 
 llm3 = ChatGroq(
-    model="qwen/qwen3-32b",
+    model="openai/gpt-oss-120b",
     temperature=0,
     max_tokens=None,
-    reasoning_format="parsed",
     timeout=None,
     max_retries=2,
     api_key=os.environ['GROQ_API_KEY3']

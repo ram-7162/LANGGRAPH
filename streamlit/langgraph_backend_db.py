@@ -24,13 +24,12 @@ import operator
 load_dotenv()
 
 llm = ChatGroq(
-    model="qwen/qwen3-32b",
+    model="openai/gpt-oss-120b",
     temperature=0,
     max_tokens=None,
-    reasoning_format="parsed",
     timeout=None,
     max_retries=2,
-    api_key=os.environ['GROQ_API_KEY3']
+    api_key=os.environ['GROQ_API_KEY1']
     # other params...
 )
 
@@ -54,6 +53,32 @@ graph.add_edge("chat_node", END)
 
 chatbot = graph.compile(checkpointer=checkpointer)
 
+
+if __name__ == "__main__":
+    CONFIG = {'configurable': {'thread_id': 'thread-2'}}
+    response = chatbot.invoke(
+    {'messages': [HumanMessage(content='My name is rohit how could yoy assist me?')]},
+    config= CONFIG)
+
+    print(response)
+
+# InMemorySaver
+#     ↓
+# state lives in Python memory
+#     ↓
+# restart program
+#     ↓
+# ❌ state gone
+
+
+# SqliteSaver
+#     ↓
+# state lives in SQLite database
+#     ↓
+# restart program
+#     ↓
+# ✅ state can be restored
+
 def retrieve_all_threads():
     all_threads = set()
     ### checkpointer.list(None) include all the StateValueSnapshot
@@ -62,3 +87,10 @@ def retrieve_all_threads():
 
     return list(all_threads)
 
+def num_threads():
+    all_threads = set()
+    ### checkpointer.list(None) include all the StateValueSnapshot
+    for checkpoint in checkpointer.list(None):
+        all_threads.add(checkpoint.config['configurable']['thread_id'])
+
+    return len(list(all_threads))

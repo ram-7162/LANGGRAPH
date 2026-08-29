@@ -204,6 +204,10 @@ def generate_threadid():
     thread_id = uuid.uuid4()
     return thread_id
 
+# def generate_threadid():
+#     st.session_state['thread_counter'] += 1
+#     return f"conversation{st.session_state['thread_counter']}"
+
 
 def reset_chat():
     thread = generate_threadid()
@@ -224,44 +228,69 @@ def load_conversation(thread_id):
 
 ## ----------------------------------------------------------------------------------------------
 
+# It means:
 
+# "If this is the first time this Streamlit session needs message_history, create it."
+
+# It does not mean:
+
+# "Every time I switch conversations, create a new message history."
+
+# There is a huge difference.
 
 if 'message_history' not in st.session_state:
     st.session_state['message_history'] = []
 
+
 if 'thread_id' not in st.session_state:
     st.session_state['thread_id'] = generate_threadid()
+
 
 if 'thread_list' not in st.session_state:
     st.session_state['thread_list'] = []
     
+
+if 'thread_counter' not in st.session_state:
+    st.session_state['thread_counter'] = 0
+
 
 add_threads(st.session_state['thread_id'])
 
 ## --------------------------------------------------- sidebar ui ------------------------
 st.sidebar.title("Langgraph Chatbot")
 
+
+
 if st.sidebar.button("New Button"):
-    reset_chat()
+    reset_chat()   ### this reset do one of thing is :: message_history = []
 
 st.sidebar.header("My Conversation")
 
 for thread_id in st.session_state['thread_list']:
-    st.sidebar.button(str(thread_id))
-    messages = load_conversation(thread_id)
-    ### messages is list like [HumanMessage(content = "abcd"), AIMessage(content = "ram ram")]
-    temp_messages = []
 
+    if st.sidebar.button(str(thread_id)):
 
-    for msg in messages:
-        if isinstance(msg, HumanMessage):
-            role = 'user'
-        else:
-            role = "assistant"
-        temp_messages.append({'role' : role, 'content' : msg.content})
+        messages = load_conversation(thread_id)
 
+        temp_messages = []
 
-    st.session_state['message_history'] = temp_messages
+        for msg in messages:
+
+            if isinstance(msg, HumanMessage):
+                role = "user"
+            else:
+                role = "assistant"
+
+            temp_messages.append({
+                "role": role,
+                "content": msg.content
+            })
+
+        st.session_state['message_history'] = temp_messages
+
+        # VERY IMPORTANT
+        # Make the clicked conversation the active conversation
+        st.session_state['thread_id'] = thread_id
 
 
 
@@ -279,7 +308,9 @@ if user_input:
     with st.chat_message('user'):
         st.text(user_input)
 
-    CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']}}
+    CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']},
+              "metadata" : {'thread_id': st.session_state['thread_id']},
+              'run_name' : "chat_run"}
 
     with st.chat_message('assistant'):
         ai_message = st.write_stream(
